@@ -106,6 +106,8 @@ MainController::MainController(int argc, char* argv[])
   // Asus is default camera (might change later)
   Resolution::setResolution(640, 480);
   Intrinsics::setIntrinics(528, 528, 320, 240);
+  // Resolution::setResolution(512, 424);
+  // Intrinsics::setIntrinics(604, 604, 515, 268);
 
   if (calibrationFile.length()) loadCalibration(calibrationFile);
 
@@ -159,8 +161,16 @@ MainController::MainController(int argc, char* argv[])
   }
 
   if (!logReaderReady) {
-    logReader = std::make_unique<LiveLogReader>(logFile, Parse::get().arg(argc, argv, "-f", empty) > -1);
+    logReader = std::make_unique<LiveLogReader>(logFile, Parse::get().arg(argc, argv, "-f", empty) > -1, LiveLogReader::CameraType::OpenNI2);
     good = ((LiveLogReader*)logReader.get())->asus->ok();
+
+#ifdef WITH_REALSENSE
+    if(!good)
+    {
+      logReader = std::make_unique<LiveLogReader>(logFile, Parse::get().arg(argc, argv, "-f", empty) > -1, LiveLogReader::CameraType::RealSense);
+      good = ((LiveLogReader*)logReader.get())->asus->ok();
+    }
+#endif
   }
 
   if (logReader->hasIntrinsics() && !calibrationFile.length()) loadCalibration(logReader->getIntinsicsFile());

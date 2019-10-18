@@ -17,14 +17,21 @@
  */
 
 #include "LiveLogReader.h"
-
+#include "RealSenseInterface.h"
 #include <opencv2/imgproc/imgproc.hpp>
 
-LiveLogReader::LiveLogReader(std::string file, bool flipColors) : LogReader(file, flipColors), lastFrameTime(-1), lastGot(-1) {
+LiveLogReader::LiveLogReader(std::string file, bool flipColors, CameraType type) : LogReader(file, flipColors), lastFrameTime(-1), lastGot(-1) {
   std::cout << "Creating live capture... ";
   std::cout.flush();
 
-  asus = new OpenNI2Interface(Resolution::getInstance().width(), Resolution::getInstance().height());
+  if(type == CameraType::OpenNI2){
+    asus = new OpenNI2Interface(Resolution::getInstance().width(), Resolution::getInstance().height());
+  } else if(type == CameraType::RealSense) {
+    asus = nullptr;
+    // asus = new OpenNI2Interface(Resolution::getInstance().width(), Resolution::getInstance().height());
+    asus = new RealSenseInterface(Resolution::getInstance().width(), Resolution::getInstance().height());
+  } else
+    asus = nullptr;
 
   depthReadBuffer = cv::Mat(Resolution::getInstance().height(), Resolution::getInstance().width(), CV_16UC1);
   data.allocateRGBD(Resolution::getInstance().width(), Resolution::getInstance().height());
@@ -58,7 +65,7 @@ void LiveLogReader::getNext() {
 
   assert(lastDepth != -1);
 
-  int bufferIndex = lastDepth % OpenNI2Interface::numBuffers;
+  int bufferIndex = lastDepth % CameraInterface::numBuffers;// OpenNI2Interface::numBuffers;
 
   if (bufferIndex == lastGot) {
     return;

@@ -8,7 +8,7 @@ add_compile_options(-std=c++14 -Wall -Wno-unused-function -Wno-unused-variable
 # Don't follow symlinks when FILE GLOB_RECURSE (and don't warn)
 cmake_policy(SET CMP0009 NEW)
 
-set(CUDA_HOST_COMPILER "/usr/bin/g++-4.9")
+set(CUDA_HOST_COMPILER "/usr/bin/g++")
 set(BUILD_TESTS OFF CACHE BOOL "Build unit tests")
 
 # OpenMP
@@ -25,7 +25,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
 # gSLICr
-set(GSLICR_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/gSLICr")
+#set(GSLICR_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/gSLICr")
+set(GSLICR_DIR "/home/spartazhc/source/gSLICr")
 include_directories(${GSLICR_DIR}/gSLICr_Lib)
 link_directories(${GSLICR_DIR}/build)
 
