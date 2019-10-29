@@ -493,7 +493,7 @@ bool CoFusion::processFrame(const FrameData& frame, const Eigen::Matrix4f* inPos
   predict();
 
   if (!lost) {
-    // processFerns(); FIXME
+    // processFerns(); //FIXME
     tick++;
   }
 

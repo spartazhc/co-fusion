@@ -208,6 +208,7 @@ MainController::MainController(int argc, char* argv[])
   logReader->flipColors = Parse::get().arg(argc, argv, "-f", empty) > -1;
 
   openLoop = true;  // FIXME //!groundTruthOdometry && (Parse::get().arg(argc, argv, "-o", empty) > -1);
+  // openLoop = !groundTruthOdometry && Parse::get().arg(argc, argv, "-o", empty) > -1;
   reloc = Parse::get().arg(argc, argv, "-rl", empty) > -1;
   frameskip = Parse::get().arg(argc, argv, "-fs", empty) > -1;
   quit = Parse::get().arg(argc, argv, "-q", empty) > -1;
@@ -367,6 +368,10 @@ void MainController::run() {
           }
         } else {
           logReader->getNext();
+          if (logReader->hasMore()) logReader->getNext(); // for frame drop
+          else break;
+          if (logReader->hasMore()) logReader->getNext();
+          else break;
         }
         TOCK("LogRead");
 
